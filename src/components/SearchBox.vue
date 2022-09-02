@@ -19,13 +19,26 @@ export default {
   },
   methods: {
     search() {
+      this.$bus.$emit("mydata", {
+        isFirst: false,
+        isLoading: true,
+        errorMsg: "",
+        List: [],
+      });
       axios.get(`https://api.github.com/search/users?q=${this.keyWord}`).then(
-        (data) => {
-          console.log("请求成功！", data.data.items);
-          this.$bus.$emit("mydata", data.data.items);
+        (rep) => {
+          this.$bus.$emit("mydata", {
+            isLoading: false,
+            errorMsg: "",
+            users: rep.data.items,
+          });
         },
         (error) => {
-          console.log("请求失败！", error);
+          this.$bus.$emit("mydata", {
+            isLoading: false,
+            errorMsg: error.message,
+            users: [],
+          });
         }
       );
     },
